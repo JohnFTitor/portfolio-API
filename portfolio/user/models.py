@@ -1,6 +1,6 @@
+from django.contrib.auth import models as auth_models
 from django.db import models
+from ..abstract import UUIDModel
 
-class User(models.Model):
-  id = models.UUIDField(primary_key=True)
-  email = models.EmailField(unique=True, null=True)
-  username = models.CharField(unique=True, null=True, max_length=150)
+class User(UUIDModel, auth_models.AbstractUser):
+    is_admin = models.BooleanField(null=True, default=False)
