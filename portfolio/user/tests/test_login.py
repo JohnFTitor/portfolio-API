@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.urls import reverse as url_reverse
 from rest_framework import status
 import factory
+from knox.models import AuthToken
 
 class TestLoginView(TestCase):
   def setUp(self):
@@ -56,5 +57,9 @@ class TestLoginView(TestCase):
     assert response.status_code == status.HTTP_200_OK
 
     assert 'token' in response.data
+
+    assert AuthToken.objects.filter(
+      user=user,
+    ).exists()
 
 
