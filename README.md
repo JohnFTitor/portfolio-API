@@ -5,4 +5,4 @@ Django API for my Personal Portfolio, to store information regarding projects an
 
 Run `python3 -m venv ve` to set up the virtual env
 
-Then `ve/bin/pip install -r requirements.txt` to install the requirements
+Then `ve/bin/python -m pip install -r requirements.txt` to install the requirements
