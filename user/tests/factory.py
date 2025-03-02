@@ -1,4 +1,4 @@
-from portfolio.user import models
+from user import models
 
 
 def user(

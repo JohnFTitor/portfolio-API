@@ -1,6 +1,6 @@
-from portfolio.abstract import UUIDModel, TimeStampModel
+from util.abstract import UUIDModel, TimeStampModel
 from django.db import models
-from portfolio.user.models import User
+from user.models import User
 
 
 class Tag(UUIDModel, TimeStampModel):
