@@ -40,3 +40,8 @@ class Project(UUIDModel, TimeStampModel):
         null=True,
         blank=True,
     )
+
+    tags = models.ManyToManyField(
+        Tag,
+        related_name='projects',
+    )
