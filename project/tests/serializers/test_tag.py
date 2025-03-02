@@ -7,7 +7,7 @@ from .mock_serializers import serialize_tag
 class TestTagRender(TestCase):
 
     def test_tag_serializes_correctly(self):
-        tag = factory.tag()
+        tag = factory.tag(save=True)
 
         serialized_tag = TagSerializer(
             instance=tag,
