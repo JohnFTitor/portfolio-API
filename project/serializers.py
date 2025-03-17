@@ -20,11 +20,50 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     name = serializers.CharField(required=True)
     description = serializers.CharField(required=True)
-    live_url = serializers.CharField(required=True, allow_blank=True)
-    source_url = serializers.CharField(required=True, allow_blank=True)
-    demo_url = serializers.CharField(required=True, allow_blank=True)
+    live_url = serializers.CharField(required=False, allow_blank=True)
+    source_url = serializers.CharField(required=False, allow_blank=True)
+    demo_url = serializers.CharField(required=False, allow_blank=True)
 
     tags = TagSerializer(many=True, read_only=True)
+
+    # Write fields
+    tag_names = serializers.ListField(
+        child=serializers.CharField(allow_blank=True),
+        write_only=True,
+        required=False,
+    )
+
+    def create(self, validated_data):
+        tag_names = validated_data.pop('tag_names', [])
+
+        project = super().create(validated_data)
+
+        existing_tags = models.Tag.objects.filter(
+            name__in=tag_names,
+        )
+
+        existing_names = existing_tags.values_list(
+            'name',
+            flat=True,
+        )
+
+        new_tags = [
+            models.Tag(
+                name=tag,
+            ) for tag in tag_names 
+            if tag not in existing_names
+        ]
+
+        new_tags = models.Tag.objects.bulk_create(new_tags)
+
+        tags_to_add = [
+            *existing_tags,
+            *new_tags,
+        ]
+
+        project.tags.set(tags_to_add)
+
+        return project
 
     class Meta:
         model = models.Project
@@ -36,4 +75,5 @@ class ProjectSerializer(serializers.ModelSerializer):
             'source_url',
             'demo_url',
             'tags',
+            'tag_names',
         ]
