@@ -33,11 +33,11 @@ class ProjectSerializer(serializers.ModelSerializer):
         required=False,
     )
 
-    def create(self, validated_data):
-        tag_names = validated_data.pop('tag_names', [])
-
-        project = super().create(validated_data)
-
+    def _set_tags(
+        self,
+        project: models.Project,
+        tag_names: list[str],
+    ):
         existing_tags = models.Tag.objects.filter(
             name__in=tag_names,
         )
@@ -64,6 +64,21 @@ class ProjectSerializer(serializers.ModelSerializer):
         project.tags.set(tags_to_add)
 
         return project
+
+
+    def create(self, validated_data):
+        tag_names = validated_data.pop('tag_names', [])
+
+        project = super().create(validated_data)
+
+        return self._set_tags(project, tag_names)
+    
+    def update(self, instance, validated_data):
+        tag_names = validated_data.pop('tag_names', [])
+
+        project = super().update(instance, validated_data)
+
+        return self._set_tags(project, tag_names)
 
     class Meta:
         model = models.Project

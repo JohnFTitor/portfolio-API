@@ -88,3 +88,72 @@ class ProjectCreateSerializer(TestCase):
     assert project.tags.count() == 3
 
     assert Tag.objects.count() == 3
+
+
+class ProjectUpdateSerializer(TestCase):
+
+  def test_project_updates_correctly(self):
+    existing_project = factory.project(
+      name='Existing project',
+      description='Existing description',
+      save=True,
+    )
+
+    serialized_project = ProjectSerializer(
+      instance=existing_project,
+      data={
+        'name': 'New name',
+        'description': 'Description',
+        'live_url': '',
+        'source_url': 'test',
+        'demo_url': 'Test'
+      },
+    )
+
+    assert serialized_project.is_valid(raise_exception=True)
+
+    project = serialized_project.save()
+
+    assert project.name == 'New name'
+    assert project.description == 'Description'
+    assert project.live_url == ''
+    assert project.source_url == 'test'
+    assert project.demo_url == 'Test'
+    assert project.id == existing_project.id
+
+  def test_project_updates_correctly_with_tags(self):
+    existing_project = factory.project(
+      name='Existing project',
+      description='Existing description',
+      save=True,
+    )
+
+    tags = Tag.objects.bulk_create([
+      factory.tag(
+        name=f"{index} Tag",
+      ) for index in range(5)
+    ])
+    
+    existing_project.tags.set(tags)
+
+    serialized_project = ProjectSerializer(
+      instance=existing_project,
+      data={
+        'name': 'New name',
+        'description': 'Description',
+        'tag_names': ['First', 'New'],
+      },
+    )
+
+    assert serialized_project.is_valid(raise_exception=True)
+
+    project = serialized_project.save()
+
+    assert project.tags.count() == 2
+
+    self.assertEqual(
+      list(project.tags.values_list('name', flat=True)),
+      ['First', 'New'],
+    )
+
+
