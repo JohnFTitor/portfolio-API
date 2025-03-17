@@ -20,9 +20,9 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     name = serializers.CharField(required=True)
     description = serializers.CharField(required=True)
-    live_url = serializers.CharField(required=True)
-    source_url = serializers.CharField(required=True)
-    demo_url = serializers.CharField(required=True)
+    live_url = serializers.CharField(required=True, allow_blank=True)
+    source_url = serializers.CharField(required=True, allow_blank=True)
+    demo_url = serializers.CharField(required=True, allow_blank=True)
 
     tags = TagSerializer(many=True, read_only=True)
 

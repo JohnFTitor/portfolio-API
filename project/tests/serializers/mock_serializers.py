@@ -2,12 +2,10 @@ from project.models import Tag, Project
 
 
 def serialize_tag(tag: Tag):
-
     return {
         'id': str(tag.id),
         'name': tag.name,
     }
-
 
 def serialize_project(project: Project):
     return {
